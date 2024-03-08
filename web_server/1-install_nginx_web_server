@@ -20,3 +20,18 @@ echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
 
 # Restart Nginx service
 sudo service nginx restart
+
+# Check if Nginx is running and accessible on port 80
+sleep 2 # Wait for Nginx to restart
+if curl -s localhost | grep -q "Holberton School"; then
+    echo "Nginx installed and configured successfully."
+else
+    echo "Nginx configuration failed. Please check logs for more information."
+fi
+
+# Check if Nginx returns 200 when querying /
+if curl -s -o /dev/null -w "%{http_code}" localhost == "200"; then
+    echo "Nginx returns 200 when querying /."
+else
+    echo "Nginx does not return 200 when querying /."
+fi
