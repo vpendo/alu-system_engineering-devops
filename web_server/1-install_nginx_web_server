@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Installing Nginx on Ubuntu
-# Nginx is listening on port 80
-# The GET request should return a page containing "Holberton School"
+# Bash script to install and configure Nginx web server
 
 # Update package lists and upgrade existing packages
 sudo apt-get update && sudo apt-get upgrade -y
@@ -9,29 +7,22 @@ sudo apt-get update && sudo apt-get upgrade -y
 # Install Nginx
 sudo apt-get install nginx -y
 
-# Create a directory called html inside your nginx server
-sudo mkdir -p /var/www/html
+# Modify Nginx default configuration to listen on port 80
+sudo sed -i 's/listen 80 default_server;/listen 80;/g' /etc/nginx/sites-available/default
 
-# Create a file inside that directory called index.html
-sudo touch /var/www/html/index.html
-
-# Display your message then
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
-
-# Restart Nginx service
+# Restart Nginx without using systemctl
 sudo service nginx restart
 
 # Check if Nginx is running and accessible on port 80
-sleep 2 # Wait for Nginx to restart
-if curl -s localhost | grep -q "Holberton School"; then
-    echo "Nginx installed and configured successfully."
+if curl -s -o /dev/null -w "%{http_code}" localhost == "200"; then
+    echo "Nginx is installed on your web01 server and accepting traffic on port 80."
 else
-    echo "Nginx configuration failed. Please check logs for more information."
+    echo "Nginx configuration failed or is not accepting traffic on port 80."
 fi
 
-# Check if Nginx returns 200 when querying /
-if curl -s -o /dev/null -w "%{http_code}" localhost == "200"; then
-    echo "Nginx returns 200 when querying /."
+# Check if Nginx returns a page containing "Holberton School" at its root
+if curl -s localhost | grep -q "Holberton School"; then
+    echo "Nginx returns at its root / a page that contains Holberton School."
 else
-    echo "Nginx does not return 200 when querying /."
+    echo "Nginx does not return a page containing Holberton School at its root."
 fi
